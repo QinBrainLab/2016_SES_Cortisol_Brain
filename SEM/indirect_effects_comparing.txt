@@ -1,0 +1,36 @@
+# This code was conducted by Mplus version 7.
+
+data:file is compare_2kind_models.dat;
+variable:names are ses auci lblvm group;
+         usevariables are ses auci lblvm;
+         grouping is group (1=model1 2=model2);
+         
+analysis:
+         bootstrap = 1000;
+model:
+      auci ON ses; 
+      lblvm on auci; 
+
+
+model indirect:
+      lblvm ind auci ses;
+
+model model1:
+      auci ON ses (a1); 
+      lblvm ON auci (b1);
+      lblvm on ses(c1);
+
+
+model model2:
+      lblvm ON ses (a2); 
+      auci on lblvm (b2); 
+      auci on ses(c2);
+
+model constraint:
+      new(s c sc);
+      s = a1 * b1;
+      c = a2 * b2;
+      sc = s - c;
+
+OUTPUT:
+standardized CINTERVAL(BCBOOTSTRAP);
